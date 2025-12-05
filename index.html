@@ -7,6 +7,8 @@
     <link rel="icon" href="icon.ico" type="image/x-icon">
     <!-- Font Awesome with crossorigin to avoid tracking warnings -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous">
+    <!-- SellAuth Embed Script -->
+    <script src="https://sellauth.com/assets/js/sellauth-embed-2.js"></script>
     <style>
         * {
             margin: 0;
@@ -252,7 +254,9 @@
         }
         
         .purchase-button {
-            display: block;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             width: 100%;
             background: #fff;
             color: #0a0a0a;
@@ -267,6 +271,7 @@
             text-decoration: none;
             position: relative;
             overflow: hidden;
+            gap: 15px;
         }
         
         .purchase-button:hover {
@@ -279,13 +284,94 @@
             transform: translateY(-2px);
         }
         
-        .purchase-button .button-text {
-            position: relative;
-            z-index: 2;
+        /* SellAuth Modal Override Styles */
+        #sell-auth-modal {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif !important;
         }
         
-        .purchase-button .button-icon {
-            margin-right: 12px;
+        #sell-auth-modal .modal-content {
+            background: #151515 !important;
+            border: 1px solid #252525 !important;
+            border-radius: 20px !important;
+            color: #fff !important;
+        }
+        
+        #sell-auth-modal .modal-header {
+            background: #111 !important;
+            border-bottom: 1px solid #252525 !important;
+            padding: 30px !important;
+        }
+        
+        #sell-auth-modal .modal-title {
+            color: #fff !important;
+            font-size: 2rem !important;
+            font-weight: 600 !important;
+        }
+        
+        #sell-auth-modal .btn-close {
+            filter: invert(1) !important;
+            opacity: 0.7 !important;
+        }
+        
+        #sell-auth-modal .modal-body {
+            padding: 30px !important;
+            background: #151515 !important;
+        }
+        
+        #sell-auth-modal .form-label {
+            color: #bbb !important;
+            font-size: 1.1rem !important;
+            margin-bottom: 8px !important;
+        }
+        
+        #sell-auth-modal .form-control {
+            background: #0a0a0a !important;
+            border: 1px solid #333 !important;
+            color: #fff !important;
+            border-radius: 10px !important;
+            padding: 15px !important;
+            font-size: 1.1rem !important;
+        }
+        
+        #sell-auth-modal .form-control:focus {
+            border-color: #666 !important;
+            box-shadow: 0 0 0 0.2rem rgba(102, 102, 102, 0.25) !important;
+        }
+        
+        #sell-auth-modal .btn-primary {
+            background: #fff !important;
+            color: #0a0a0a !important;
+            border: none !important;
+            border-radius: 12px !important;
+            padding: 18px !important;
+            font-size: 1.2rem !important;
+            font-weight: 600 !important;
+            transition: all 0.3s !important;
+        }
+        
+        #sell-auth-modal .btn-primary:hover {
+            background: #f0f0f0 !important;
+            transform: translateY(-3px) !important;
+        }
+        
+        #sell-auth-modal .alert {
+            background: rgba(255, 200, 50, 0.1) !important;
+            border: 1px solid #ffc832 !important;
+            color: #ffc832 !important;
+            border-radius: 10px !important;
+        }
+        
+        #sell-auth-modal .text-muted {
+            color: #888 !important;
+        }
+        
+        #sell-auth-modal .form-check-input {
+            background-color: #0a0a0a !important;
+            border: 1px solid #333 !important;
+        }
+        
+        #sell-auth-modal .form-check-label {
+            color: #bbb !important;
         }
         
         footer {
@@ -295,212 +381,6 @@
             border-top: 1px solid #333;
             color: #888;
             font-size: 1.2rem;
-        }
-        
-        /* Payment Modal */
-        .payment-modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(10, 10, 10, 0.95);
-            display: none;
-            justify-content: center;
-            align-items: center;
-            z-index: 9999;
-            backdrop-filter: blur(10px);
-        }
-        
-        .payment-content {
-            background: #151515;
-            border-radius: 20px;
-            padding: 50px;
-            border: 1px solid #252525;
-            max-width: 500px;
-            width: 90%;
-            text-align: center;
-            transform: translateY(20px);
-            opacity: 0;
-            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-        
-        .payment-content.show {
-            transform: translateY(0);
-            opacity: 1;
-        }
-        
-        .payment-content h3 {
-            font-size: 2.2rem;
-            margin-bottom: 25px;
-            color: #fff;
-        }
-        
-        .payment-content p {
-            color: #bbb;
-            font-size: 1.2rem;
-            margin-bottom: 30px;
-            line-height: 1.6;
-        }
-        
-        .payment-amount {
-            font-size: 2.5rem;
-            font-weight: 700;
-            color: #fff;
-            margin: 20px 0;
-            padding: 15px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 10px;
-        }
-        
-        .payment-info {
-            background: rgba(255, 200, 50, 0.1);
-            border: 1px solid #ffc832;
-            border-radius: 10px;
-            padding: 20px;
-            margin: 25px 0;
-            text-align: left;
-        }
-        
-        .payment-info h4 {
-            color: #ffc832;
-            margin-bottom: 10px;
-            font-size: 1.2rem;
-        }
-        
-        .payment-info ul {
-            padding-left: 20px;
-        }
-        
-        .payment-info li {
-            margin-bottom: 8px;
-            color: #ddd;
-        }
-        
-        .close-btn, .confirm-btn {
-            background: #fff;
-            color: #0a0a0a;
-            border: none;
-            padding: 15px 40px;
-            font-size: 1.2rem;
-            font-weight: 600;
-            border-radius: 10px;
-            cursor: pointer;
-            transition: all 0.3s;
-            margin: 10px;
-            display: inline-block;
-        }
-        
-        .close-btn:hover, .confirm-btn:hover {
-            background: #f0f0f0;
-            transform: translateY(-3px);
-        }
-        
-        .confirm-btn {
-            background: #4CAF50;
-            color: white;
-        }
-        
-        .confirm-btn:hover {
-            background: #45a049;
-        }
-        
-        /* Success Modal */
-        .success-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(10, 10, 10, 0.95);
-            display: none;
-            justify-content: center;
-            align-items: center;
-            z-index: 10000;
-            backdrop-filter: blur(10px);
-        }
-        
-        .success-modal {
-            background: #151515;
-            border-radius: 20px;
-            padding: 50px;
-            border: 1px solid #252525;
-            max-width: 500px;
-            width: 90%;
-            text-align: center;
-            transform: translateY(20px);
-            opacity: 0;
-            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-        
-        .success-modal.show {
-            transform: translateY(0);
-            opacity: 1;
-        }
-        
-        .success-modal i {
-            font-size: 4rem;
-            color: #4CAF50;
-            margin-bottom: 25px;
-        }
-        
-        .success-modal h3 {
-            font-size: 2.2rem;
-            margin-bottom: 20px;
-            color: #fff;
-        }
-        
-        .success-modal p {
-            color: #bbb;
-            font-size: 1.2rem;
-            margin-bottom: 30px;
-            line-height: 1.6;
-        }
-        
-        .success-modal .close-btn {
-            background: #fff;
-            color: #0a0a0a;
-            border: none;
-            padding: 15px 40px;
-            font-size: 1.2rem;
-            font-weight: 600;
-            border-radius: 10px;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-        
-        .success-modal .close-btn:hover {
-            background: #f0f0f0;
-            transform: translateY(-3px);
-        }
-        
-        /* Loading Spinner */
-        .loading-spinner {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(10, 10, 10, 0.9);
-            z-index: 10001;
-            justify-content: center;
-            align-items: center;
-            backdrop-filter: blur(5px);
-        }
-        
-        .spinner {
-            width: 60px;
-            height: 60px;
-            border: 6px solid #333;
-            border-top: 6px solid #fff;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-        
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
         }
         
         @media (max-width: 1200px) {
@@ -626,14 +506,6 @@
             .purchase-button {
                 font-size: 1.6rem;
                 padding: 20px;
-            }
-            
-            .payment-content, .success-modal {
-                padding: 40px 30px;
-            }
-            
-            .payment-content h3, .success-modal h3 {
-                font-size: 1.8rem;
             }
         }
         
@@ -790,9 +662,18 @@
                         <div class="total-amount" id="totalPrice">€0.02</div>
                     </div>
                     
-                    <button id="checkoutButton" class="purchase-button">
-                        <i class="fas fa-shopping-cart button-icon"></i>
-                        <span class="button-text">Purchase Now</span>
+                    <button
+                        id="checkoutButton"
+                        class="purchase-button sellauth-button"
+                        type="button"
+                        onclick="handleSellAuthCheckout()"
+                    >
+                        <i class="fas fa-shopping-cart"></i>
+                        <span>Purchase Now</span>
+                        <!-- SellAuth Spinner (hidden by default) -->
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon spinner" style="display: none;" fill="currentColor" viewBox="0 0 256 256">
+                            <path d="M232,128a104,104,0,0,1-208,0c0-41,23.81-78.36,60.66-95.27a8,8,0,0,1,6.68,14.54C60.15,61.59,40,93.27,40,128a88,88,0,0,0,176,0c0-34.73-20.15-66.41-51.34-80.73a8,8,0,0,1,6.68-14.54C208.19,49.64,232,87,232,128Z"></path>
+                        </svg>
                     </button>
                 </section>
             </div>
@@ -805,62 +686,19 @@
         </div>
     </footer>
     
-    <!-- Loading Spinner -->
-    <div class="loading-spinner" id="loadingSpinner">
-        <div class="spinner"></div>
-    </div>
-    
-    <!-- Payment Confirmation Modal -->
-    <div class="payment-modal" id="paymentModal">
-        <div class="payment-content" id="paymentContent">
-            <h3>Confirm Your Purchase</h3>
-            <p>You are about to purchase:</p>
-            <div class="payment-amount" id="confirmAmount">€0.02</div>
-            <p>for <span id="confirmTokens">1</span> Discord Token(s)</p>
-            
-            <div class="payment-info">
-                <h4>Important Information:</h4>
-                <ul>
-                    <li>Tokens will be delivered via email within 24 hours</li>
-                    <li>Make sure tokens are 2 days old before use to avoid captcha</li>
-                    <li>All tokens come with verified email addresses</li>
-                    <li>No refunds after delivery</li>
-                </ul>
-            </div>
-            
-            <button class="confirm-btn" id="confirmPurchase">Proceed to Payment</button>
-            <button class="close-btn" onclick="closePaymentModal()">Cancel</button>
-        </div>
-    </div>
-    
-    <!-- Success Modal -->
-    <div class="success-overlay" id="successOverlay">
-        <div class="success-modal" id="successModal">
-            <i class="fas fa-check-circle"></i>
-            <h3>Order Placed Successfully!</h3>
-            <p>Your order has been processed successfully. You will receive an email confirmation shortly with your purchase details.</p>
-            <p>Thank you for choosing Go6 Tokens!</p>
-            <button class="close-btn" onclick="closeSuccessModal()">Continue Shopping</button>
-        </div>
-    </div>
-    
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const tokenAmountInput = document.getElementById('tokenAmount');
             const totalPriceElement = document.getElementById('totalPrice');
             const currentYearElement = document.getElementById('currentYear');
             const checkoutButton = document.getElementById('checkoutButton');
-            const paymentModal = document.getElementById('paymentModal');
-            const paymentContent = document.getElementById('paymentContent');
-            const confirmAmount = document.getElementById('confirmAmount');
-            const confirmTokens = document.getElementById('confirmTokens');
-            const confirmPurchase = document.getElementById('confirmPurchase');
-            const successOverlay = document.getElementById('successOverlay');
-            const successModal = document.getElementById('successModal');
-            const loadingSpinner = document.getElementById('loadingSpinner');
             
             const PRICE_PER_TOKEN = 0.02;
-            const PRODUCT_ID = '545966';
+            const PRODUCT_ID = '545966'; // Your SellAuth product ID
+            const SHOP_ID = '91082'; // You'll need to get this from your SellAuth dashboard
+            
+            // Set current year in footer
+            currentYearElement.textContent = new Date().getFullYear();
             
             function calculateTotal() {
                 let amount = parseInt(tokenAmountInput.value);
@@ -880,157 +718,105 @@
                 return { amount, total };
             }
             
-            // Show payment confirmation modal
-            checkoutButton.addEventListener('click', function() {
+            // Handle SellAuth checkout
+            window.handleSellAuthCheckout = function() {
                 const { amount, total } = calculateTotal();
                 
-                // Update confirmation modal
-                confirmAmount.textContent = `€${total.toFixed(2)}`;
-                confirmTokens.textContent = amount;
+                // For dynamic pricing with SellAuth, you might need to create variants for different quantities
+                // or use a different approach. Here's the basic implementation:
                 
-                // Show modal
-                paymentModal.style.display = 'flex';
-                setTimeout(() => {
-                    paymentContent.classList.add('show');
-                }, 10);
-            });
-            
-            // Handle payment confirmation
-            confirmPurchase.addEventListener('click', function() {
-                const { amount, total } = calculateTotal();
-                
-                // Close payment modal
-                closePaymentModal();
-                
-                // Show loading spinner
-                showLoading();
-                
-                // Simulate processing delay
-                setTimeout(() => {
-                    // Hide loading spinner
-                    hideLoading();
-                    
-                    // Show success modal
-                    showSuccessModal();
-                    
-                    // Try to open SellAuth if available
-                    tryOpenSellAuth(amount, total);
-                }, 2000);
-            });
-            
-            // Try to open SellAuth if script loaded
-            function tryOpenSellAuth(amount, total) {
-                if (typeof window.Sell !== 'undefined') {
-                    // SellAuth is available
-                    const sell = new window.Sell({
-                        product: PRODUCT_ID,
-                        custom: {
-                            name: 'Go6 Tokens Customer',
-                            tokens_amount: amount,
-                            total_price: total.toFixed(2)
-                        }
-                    });
-                    
-                    sell.setPrice(total);
-                    sell.setDescription(`Purchase of ${amount} UHQ Email Verified Discord Token${amount > 1 ? 's' : ''}`);
-                    sell.open();
-                    
-                    // Listen for successful purchase
-                    sell.on('sale', function(sale) {
-                        console.log('Sale completed:', sale);
-                    });
-                } else {
-                    // SellAuth not loaded, show alternative message
-                    console.log('SellAuth not available. Order details:', { amount, total, productId: PRODUCT_ID });
-                    // You could redirect to SellAuth directly:
-                    // window.open(`https://sell.app/checkout/${PRODUCT_ID}?amount=${total}`, '_blank');
+                // First, let's check if SellAuth script is loaded
+                if (typeof window.sellAuthEmbed === 'undefined') {
+                    alert('Payment system is loading, please try again in a moment.');
+                    return;
                 }
+                
+                // You need to create product variants in SellAuth for different quantities
+                // For now, I'll assume you have variants for common quantities
+                // You can also use a single product and handle quantity differently
+                
+                // Basic example - you'll need to adjust based on your SellAuth setup
+                window.sellAuthEmbed.checkout(checkoutButton, {
+                    cart: [{ 
+                        productId: PRODUCT_ID, 
+                        variantId: getVariantIdForQuantity(amount), // You need to define this function
+                        quantity: 1 
+                    }],
+                    shopId: SHOP_ID,
+                    modal: true
+                });
+                
+                // Note: For dynamic pricing based on quantity, you have several options:
+                // 1. Create multiple variants in SellAuth (1 token, 10 tokens, 100 tokens, etc.)
+                // 2. Use a single product and adjust price via custom fields
+                // 3. Use SellAuth's API for more complex pricing
+                
+                console.log('Purchasing', amount, 'tokens for €', total.toFixed(2));
+            };
+            
+            // Helper function to get variant ID based on quantity
+            // You need to set this up in your SellAuth dashboard
+            function getVariantIdForQuantity(quantity) {
+                // Map quantities to variant IDs
+                // You need to create these variants in your SellAuth product
+                const variantMap = {
+                    1: '120121',    // Example: 1 token variant
+                    10: '120122',   // Example: 10 tokens variant
+                    50: '120123',   // Example: 50 tokens variant
+                    100: '120124',  // Example: 100 tokens variant
+                    500: '120125',  // Example: 500 tokens variant
+                    1000: '120126'  // Example: 1000 tokens variant
+                };
+                
+                // Find the closest available quantity
+                const availableQuantities = Object.keys(variantMap).map(Number).sort((a, b) => a - b);
+                let closestQuantity = availableQuantities[0];
+                
+                for (const qty of availableQuantities) {
+                    if (quantity >= qty) {
+                        closestQuantity = qty;
+                    } else {
+                        break;
+                    }
+                }
+                
+                return variantMap[closestQuantity] || variantMap[1];
             }
-            
-            // Modal functions
-            window.showLoading = function() {
-                loadingSpinner.style.display = 'flex';
-            };
-            
-            window.hideLoading = function() {
-                loadingSpinner.style.display = 'none';
-            };
-            
-            window.closePaymentModal = function() {
-                paymentContent.classList.remove('show');
-                setTimeout(() => {
-                    paymentModal.style.display = 'none';
-                }, 500);
-            };
-            
-            window.showSuccessModal = function() {
-                successOverlay.style.display = 'flex';
-                setTimeout(() => {
-                    successModal.classList.add('show');
-                }, 10);
-            };
-            
-            window.closeSuccessModal = function() {
-                successModal.classList.remove('show');
-                setTimeout(() => {
-                    successOverlay.style.display = 'none';
-                    // Reset the form
-                    tokenAmountInput.value = 1;
-                    calculateTotal();
-                }, 500);
-            };
             
             // Calculate total when amount changes
             tokenAmountInput.addEventListener('input', calculateTotal);
             tokenAmountInput.addEventListener('change', calculateTotal);
             
-            // Set current year in footer
-            currentYearElement.textContent = new Date().getFullYear();
-            
             // Calculate initial total
             calculateTotal();
             
-            // Close modals when clicking outside
-            paymentModal.addEventListener('click', function(e) {
-                if (e.target === paymentModal) {
-                    closePaymentModal();
-                }
-            });
-            
-            successOverlay.addEventListener('click', function(e) {
-                if (e.target === successOverlay) {
-                    closeSuccessModal();
-                }
-            });
-            
-            // Close modals with Escape key
-            document.addEventListener('keydown', function(e) {
-                if (e.key === 'Escape') {
-                    if (paymentModal.style.display === 'flex') {
-                        closePaymentModal();
-                    }
-                    if (successOverlay.style.display === 'flex') {
-                        closeSuccessModal();
-                    }
-                }
-            });
-            
-            // Dynamically load SellAuth script
-            function loadSellAuthScript() {
-                const script = document.createElement('script');
-                script.src = 'https://embed.sell.app/embed/script.js';
-                script.async = true;
-                script.onload = function() {
-                    console.log('SellAuth script loaded successfully');
-                };
-                script.onerror = function() {
-                    console.log('Failed to load SellAuth script');
-                };
-                document.head.appendChild(script);
+            // Apply custom styles to SellAuth modal when it opens
+            function customizeSellAuthModal() {
+                const observer = new MutationObserver(function(mutations) {
+                    mutations.forEach(function(mutation) {
+                        if (mutation.addedNodes) {
+                            mutation.addedNodes.forEach(function(node) {
+                                if (node.id === 'sell-auth-modal') {
+                                    // Modal is added to DOM
+                                    setTimeout(() => {
+                                        // Add your custom styles here
+                                        const modal = document.getElementById('sell-auth-modal');
+                                        if (modal) {
+                                            // Add custom class for styling
+                                            modal.classList.add('dark-theme');
+                                        }
+                                    }, 100);
+                                }
+                            });
+                        }
+                    });
+                });
+                
+                observer.observe(document.body, { childList: true, subtree: true });
             }
             
-            // Load SellAuth script after page loads
-            setTimeout(loadSellAuthScript, 1000);
+            // Start observing for SellAuth modal
+            customizeSellAuthModal();
         });
     </script>
 </body>
