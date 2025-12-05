@@ -284,47 +284,45 @@
             transform: translateY(-2px);
         }
         
-        /* SellAuth Modal Override Styles */
-        #sell-auth-modal {
-            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif !important;
-        }
-        
-        #sell-auth-modal .modal-content {
+        /* SellAuth Modal Override Styles - More specific selectors */
+        .modal-dialog .modal-content {
             background: #151515 !important;
             border: 1px solid #252525 !important;
             border-radius: 20px !important;
             color: #fff !important;
         }
         
-        #sell-auth-modal .modal-header {
+        .modal-dialog .modal-header {
             background: #111 !important;
             border-bottom: 1px solid #252525 !important;
             padding: 30px !important;
         }
         
-        #sell-auth-modal .modal-title {
+        .modal-dialog .modal-title {
             color: #fff !important;
             font-size: 2rem !important;
             font-weight: 600 !important;
         }
         
-        #sell-auth-modal .btn-close {
+        .modal-dialog .btn-close {
             filter: invert(1) !important;
             opacity: 0.7 !important;
         }
         
-        #sell-auth-modal .modal-body {
+        .modal-dialog .modal-body {
             padding: 30px !important;
             background: #151515 !important;
         }
         
-        #sell-auth-modal .form-label {
+        .modal-dialog .form-label {
             color: #bbb !important;
             font-size: 1.1rem !important;
             margin-bottom: 8px !important;
         }
         
-        #sell-auth-modal .form-control {
+        .modal-dialog input.form-control,
+        .modal-dialog textarea.form-control,
+        .modal-dialog select.form-control {
             background: #0a0a0a !important;
             border: 1px solid #333 !important;
             color: #fff !important;
@@ -333,12 +331,12 @@
             font-size: 1.1rem !important;
         }
         
-        #sell-auth-modal .form-control:focus {
+        .modal-dialog .form-control:focus {
             border-color: #666 !important;
             box-shadow: 0 0 0 0.2rem rgba(102, 102, 102, 0.25) !important;
         }
         
-        #sell-auth-modal .btn-primary {
+        .modal-dialog .btn-primary {
             background: #fff !important;
             color: #0a0a0a !important;
             border: none !important;
@@ -349,29 +347,38 @@
             transition: all 0.3s !important;
         }
         
-        #sell-auth-modal .btn-primary:hover {
+        .modal-dialog .btn-primary:hover {
             background: #f0f0f0 !important;
             transform: translateY(-3px) !important;
         }
         
-        #sell-auth-modal .alert {
+        .modal-dialog .alert {
             background: rgba(255, 200, 50, 0.1) !important;
             border: 1px solid #ffc832 !important;
             color: #ffc832 !important;
             border-radius: 10px !important;
         }
         
-        #sell-auth-modal .text-muted {
+        .modal-dialog .text-muted {
             color: #888 !important;
         }
         
-        #sell-auth-modal .form-check-input {
+        .modal-dialog .form-check-input {
             background-color: #0a0a0a !important;
             border: 1px solid #333 !important;
         }
         
-        #sell-auth-modal .form-check-label {
+        .modal-dialog .form-check-label {
             color: #bbb !important;
+        }
+        
+        /* Style for the cart items in modal */
+        .modal-dialog .cart-item {
+            background: rgba(255, 255, 255, 0.05) !important;
+            border: 1px solid #333 !important;
+            border-radius: 10px !important;
+            padding: 15px !important;
+            margin-bottom: 10px !important;
         }
         
         footer {
@@ -695,7 +702,8 @@
             
             const PRICE_PER_TOKEN = 0.02;
             const PRODUCT_ID = '545966'; // Your SellAuth product ID
-            const SHOP_ID = '197487'; // You'll need to get this from your SellAuth dashboard
+            const SHOP_ID = '197487'; // Your SellAuth shop ID
+            const VARIANT_ID = '836691'; // Your single variant ID
             
             // Set current year in footer
             currentYearElement.textContent = new Date().getFullYear();
@@ -715,73 +723,32 @@
                 
                 const total = amount * PRICE_PER_TOKEN;
                 totalPriceElement.textContent = `€${total.toFixed(2)}`;
-                return { amount, total };
+                return amount;
             }
             
             // Handle SellAuth checkout
             window.handleSellAuthCheckout = function() {
-                const { amount, total } = calculateTotal();
+                const quantity = calculateTotal();
                 
-                // For dynamic pricing with SellAuth, you might need to create variants for different quantities
-                // or use a different approach. Here's the basic implementation:
-                
-                // First, let's check if SellAuth script is loaded
+                // Check if SellAuth script is loaded
                 if (typeof window.sellAuthEmbed === 'undefined') {
                     alert('Payment system is loading, please try again in a moment.');
                     return;
                 }
                 
-                // You need to create product variants in SellAuth for different quantities
-                // For now, I'll assume you have variants for common quantities
-                // You can also use a single product and handle quantity differently
-                
-                // Basic example - you'll need to adjust based on your SellAuth setup
+                // Use the quantity field directly in the cart
                 window.sellAuthEmbed.checkout(checkoutButton, {
                     cart: [{ 
                         productId: PRODUCT_ID, 
-                        variantId: getVariantIdForQuantity(amount), // You need to define this function
-                        quantity: 1 
+                        variantId: VARIANT_ID,
+                        quantity: quantity  // This is the key change - use quantity from input
                     }],
                     shopId: SHOP_ID,
                     modal: true
                 });
                 
-                // Note: For dynamic pricing based on quantity, you have several options:
-                // 1. Create multiple variants in SellAuth (1 token, 10 tokens, 100 tokens, etc.)
-                // 2. Use a single product and adjust price via custom fields
-                // 3. Use SellAuth's API for more complex pricing
-                
-                console.log('Purchasing', amount, 'tokens for €', total.toFixed(2));
+                console.log('Purchasing', quantity, 'tokens for €', (quantity * PRICE_PER_TOKEN).toFixed(2));
             };
-            
-            // Helper function to get variant ID based on quantity
-            // You need to set this up in your SellAuth dashboard
-            function getVariantIdForQuantity(quantity) {
-                // Map quantities to variant IDs
-                // You need to create these variants in your SellAuth product
-                const variantMap = {
-                    1: '836691',    // Example: 1 token variant
-                    10: '120122',   // Example: 10 tokens variant
-                    50: '120123',   // Example: 50 tokens variant
-                    100: '120124',  // Example: 100 tokens variant
-                    500: '120125',  // Example: 500 tokens variant
-                    1000: '120126'  // Example: 1000 tokens variant
-                };
-                
-                // Find the closest available quantity
-                const availableQuantities = Object.keys(variantMap).map(Number).sort((a, b) => a - b);
-                let closestQuantity = availableQuantities[0];
-                
-                for (const qty of availableQuantities) {
-                    if (quantity >= qty) {
-                        closestQuantity = qty;
-                    } else {
-                        break;
-                    }
-                }
-                
-                return variantMap[closestQuantity] || variantMap[1];
-            }
             
             // Calculate total when amount changes
             tokenAmountInput.addEventListener('input', calculateTotal);
@@ -796,15 +763,35 @@
                     mutations.forEach(function(mutation) {
                         if (mutation.addedNodes) {
                             mutation.addedNodes.forEach(function(node) {
-                                if (node.id === 'sell-auth-modal') {
+                                // Check if the modal was added
+                                if (node.classList && node.classList.contains('modal') && node.id && node.id.includes('sell-auth')) {
                                     // Modal is added to DOM
                                     setTimeout(() => {
-                                        // Add your custom styles here
-                                        const modal = document.getElementById('sell-auth-modal');
-                                        if (modal) {
-                                            // Add custom class for styling
-                                            modal.classList.add('dark-theme');
-                                        }
+                                        // Add custom styling to modal elements
+                                        const modals = document.querySelectorAll('.modal');
+                                        modals.forEach(modal => {
+                                            if (modal.id.includes('sell-auth')) {
+                                                // Add dark theme class
+                                                modal.classList.add('dark-theme');
+                                                
+                                                // Apply additional styling to form elements
+                                                const inputs = modal.querySelectorAll('input, textarea, select');
+                                                inputs.forEach(input => {
+                                                    input.style.backgroundColor = '#0a0a0a';
+                                                    input.style.borderColor = '#333';
+                                                    input.style.color = '#fff';
+                                                });
+                                                
+                                                // Style buttons
+                                                const buttons = modal.querySelectorAll('button');
+                                                buttons.forEach(button => {
+                                                    if (button.classList.contains('btn-primary')) {
+                                                        button.style.backgroundColor = '#fff';
+                                                        button.style.color = '#0a0a0a';
+                                                    }
+                                                });
+                                            }
+                                        });
                                     }, 100);
                                 }
                             });
