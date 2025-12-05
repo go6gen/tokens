@@ -284,103 +284,6 @@
             transform: translateY(-2px);
         }
         
-        /* SellAuth Modal Override Styles - More specific selectors */
-        .modal-dialog .modal-content {
-            background: #151515 !important;
-            border: 1px solid #252525 !important;
-            border-radius: 20px !important;
-            color: #fff !important;
-        }
-        
-        .modal-dialog .modal-header {
-            background: #111 !important;
-            border-bottom: 1px solid #252525 !important;
-            padding: 30px !important;
-        }
-        
-        .modal-dialog .modal-title {
-            color: #fff !important;
-            font-size: 2rem !important;
-            font-weight: 600 !important;
-        }
-        
-        .modal-dialog .btn-close {
-            filter: invert(1) !important;
-            opacity: 0.7 !important;
-        }
-        
-        .modal-dialog .modal-body {
-            padding: 30px !important;
-            background: #151515 !important;
-        }
-        
-        .modal-dialog .form-label {
-            color: #bbb !important;
-            font-size: 1.1rem !important;
-            margin-bottom: 8px !important;
-        }
-        
-        .modal-dialog input.form-control,
-        .modal-dialog textarea.form-control,
-        .modal-dialog select.form-control {
-            background: #0a0a0a !important;
-            border: 1px solid #333 !important;
-            color: #fff !important;
-            border-radius: 10px !important;
-            padding: 15px !important;
-            font-size: 1.1rem !important;
-        }
-        
-        .modal-dialog .form-control:focus {
-            border-color: #666 !important;
-            box-shadow: 0 0 0 0.2rem rgba(102, 102, 102, 0.25) !important;
-        }
-        
-        .modal-dialog .btn-primary {
-            background: #fff !important;
-            color: #0a0a0a !important;
-            border: none !important;
-            border-radius: 12px !important;
-            padding: 18px !important;
-            font-size: 1.2rem !important;
-            font-weight: 600 !important;
-            transition: all 0.3s !important;
-        }
-        
-        .modal-dialog .btn-primary:hover {
-            background: #f0f0f0 !important;
-            transform: translateY(-3px) !important;
-        }
-        
-        .modal-dialog .alert {
-            background: rgba(255, 200, 50, 0.1) !important;
-            border: 1px solid #ffc832 !important;
-            color: #ffc832 !important;
-            border-radius: 10px !important;
-        }
-        
-        .modal-dialog .text-muted {
-            color: #888 !important;
-        }
-        
-        .modal-dialog .form-check-input {
-            background-color: #0a0a0a !important;
-            border: 1px solid #333 !important;
-        }
-        
-        .modal-dialog .form-check-label {
-            color: #bbb !important;
-        }
-        
-        /* Style for the cart items in modal */
-        .modal-dialog .cart-item {
-            background: rgba(255, 255, 255, 0.05) !important;
-            border: 1px solid #333 !important;
-            border-radius: 10px !important;
-            padding: 15px !important;
-            margin-bottom: 10px !important;
-        }
-        
         footer {
             background: #111;
             padding: 30px 0;
@@ -682,6 +585,11 @@
                             <path d="M232,128a104,104,0,0,1-208,0c0-41,23.81-78.36,60.66-95.27a8,8,0,0,1,6.68,14.54C60.15,61.59,40,93.27,40,128a88,88,0,0,0,176,0c0-34.73-20.15-66.41-51.34-80.73a8,8,0,0,1,6.68-14.54C208.19,49.64,232,87,232,128Z"></path>
                         </svg>
                     </button>
+                    
+                    <!-- Add a note about opening in new tab -->
+                    <p style="text-align: center; margin-top: 15px; color: #888; font-size: 0.9rem;">
+                        <i class="fas fa-external-link-alt"></i> Opens in new tab
+                    </p>
                 </section>
             </div>
         </div>
@@ -701,10 +609,9 @@
             const checkoutButton = document.getElementById('checkoutButton');
             
             const PRICE_PER_TOKEN = 0.02;
-            const PRODUCT_ID = 545966;
-            const SHOP_ID = 197487;
-            const VARIANT_ID = 836691;
-
+            const PRODUCT_ID = '545966'; // Your SellAuth product ID
+            const SHOP_ID = '197487'; // Your SellAuth shop ID
+            const VARIANT_ID = '836691'; // Your single variant ID
             
             // Set current year in footer
             currentYearElement.textContent = new Date().getFullYear();
@@ -727,7 +634,7 @@
                 return amount;
             }
             
-            // Handle SellAuth checkout
+            // Handle SellAuth checkout - UPDATED with modal: false
             window.handleSellAuthCheckout = function() {
                 const quantity = calculateTotal();
                 
@@ -737,18 +644,30 @@
                     return;
                 }
                 
-                // Use the quantity field directly in the cart
+                // Show loading state on button
+                const originalText = checkoutButton.innerHTML;
+                checkoutButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Opening Checkout...';
+                checkoutButton.disabled = true;
+                
+                // Use the quantity field directly in the cart with modal: false
                 window.sellAuthEmbed.checkout(checkoutButton, {
                     cart: [{ 
                         productId: PRODUCT_ID, 
                         variantId: VARIANT_ID,
-                        quantity: quantity  // This is the key change - use quantity from input
+                        quantity: quantity  // Uses quantity from input
                     }],
                     shopId: SHOP_ID,
-                    modal: true
+                    modal: false,  // CHANGED: Opens in new tab instead of modal
+                    scrollTop: true
                 });
                 
                 console.log('Purchasing', quantity, 'tokens for €', (quantity * PRICE_PER_TOKEN).toFixed(2));
+                
+                // Reset button after a short delay
+                setTimeout(() => {
+                    checkoutButton.innerHTML = originalText;
+                    checkoutButton.disabled = false;
+                }, 2000);
             };
             
             // Calculate total when amount changes
@@ -758,53 +677,20 @@
             // Calculate initial total
             calculateTotal();
             
-            // Apply custom styles to SellAuth modal when it opens
-            function customizeSellAuthModal() {
-                const observer = new MutationObserver(function(mutations) {
-                    mutations.forEach(function(mutation) {
-                        if (mutation.addedNodes) {
-                            mutation.addedNodes.forEach(function(node) {
-                                // Check if the modal was added
-                                if (node.classList && node.classList.contains('modal') && node.id && node.id.includes('sell-auth')) {
-                                    // Modal is added to DOM
-                                    setTimeout(() => {
-                                        // Add custom styling to modal elements
-                                        const modals = document.querySelectorAll('.modal');
-                                        modals.forEach(modal => {
-                                            if (modal.id.includes('sell-auth')) {
-                                                // Add dark theme class
-                                                modal.classList.add('dark-theme');
-                                                
-                                                // Apply additional styling to form elements
-                                                const inputs = modal.querySelectorAll('input, textarea, select');
-                                                inputs.forEach(input => {
-                                                    input.style.backgroundColor = '#0a0a0a';
-                                                    input.style.borderColor = '#333';
-                                                    input.style.color = '#fff';
-                                                });
-                                                
-                                                // Style buttons
-                                                const buttons = modal.querySelectorAll('button');
-                                                buttons.forEach(button => {
-                                                    if (button.classList.contains('btn-primary')) {
-                                                        button.style.backgroundColor = '#fff';
-                                                        button.style.color = '#0a0a0a';
-                                                    }
-                                                });
-                                            }
-                                        });
-                                    }, 100);
-                                }
-                            });
-                        }
-                    });
-                });
-                
-                observer.observe(document.body, { childList: true, subtree: true });
+            // Alternative direct URL approach if embed still has issues
+            function getDirectCheckoutURL(quantity) {
+                // This creates a direct checkout URL as fallback
+                const totalPrice = (quantity * PRICE_PER_TOKEN).toFixed(2);
+                return `https://sell.app/checkout/${PRODUCT_ID}?quantity=${quantity}&amount=${totalPrice}`;
             }
             
-            // Start observing for SellAuth modal
-            customizeSellAuthModal();
+            // Add fallback checkout function
+            window.handleFallbackCheckout = function() {
+                const quantity = calculateTotal();
+                const checkoutURL = getDirectCheckoutURL(quantity);
+                window.open(checkoutURL, '_blank');
+                console.log('Opening direct checkout for', quantity, 'tokens');
+            };
         });
     </script>
 </body>
